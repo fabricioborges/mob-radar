@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import MapView, { Marker, Callout } from 'react-native-maps'
-import { View, StyleSheet, Image, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Image, Text, TextInput, TouchableOpacity } from 'react-native';
 import { requestPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
 import { MaterialIcons } from '@expo/vector-icons';
 import api from '../services/api';
 import { GOOGLE_API_KEY } from "react-native-dotenv";
+import styles from './styles';
 
 function Main() {
     const [currentRegion, setCurrentRegion] = useState(null);
@@ -42,18 +43,18 @@ function Main() {
         return null;
     }
 
-    function getPlacesUrl(lat, long, radius, type, apiKey) {
+    function getPlacesUrl(lat, long, radius, name, apiKey) {
         const baseUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?`;
         const location = `location=${lat},${long}&radius=${radius}`;
-        const typeData = `&name=${type}`;
+        const nameData = `&name=${name}`;
         const api = `&key=${apiKey}`;
-        return `${baseUrl}${location}${typeData}${api}`;
+        return `${baseUrl}${location}${nameData}${api}`;
     }
 
     async function getPlaces() {
         const { latitude, longitude } = currentRegion;
-       
-        const url = getPlacesUrl(latitude, longitude, 5000, placeName, GOOGLE_API_KEY);
+        const radius = 5000;
+        const url = getPlacesUrl(latitude, longitude, radius, placeName, GOOGLE_API_KEY);
 
         const result = await api.get(url);
 
@@ -88,6 +89,7 @@ function Main() {
             </MapView>
             <View style={styles.searchForm}>
                 <TextInput
+                    id="inputText"
                     style={styles.searchInput}
                     placeholder='Buscar locais próximos...'
                     placeholderTextColor="#999"
@@ -102,71 +104,5 @@ function Main() {
         </>
     )
 }
-
-const styles = StyleSheet.create({
-    map: {
-        flex: 1
-    },
-
-    searchForm: {
-        position: 'absolute',
-        top: 20,
-        left: 20,
-        right: 20,
-        zIndex: 5,
-        flexDirection: 'row',
-    },
-
-    searchInput: {
-        flex: 1,
-        height: 50,
-        backgroundColor: "#fff",
-        color: '#333',
-        paddingHorizontal: 20,
-        borderRadius: 25,
-        shadowColor: '#000',
-        shadowOpacity: 0.2,
-        shadowOffset: {
-            width: 4,
-            height: 4
-        },
-        elevation: 2
-    },
-    loadButton: {
-        width: 50,
-        height: 50,
-        backgroundColor: '#0ef065',
-        borderRadius: 25,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: 15
-    },
-    avatar: {
-        width: 54,
-        height: 54,
-        borderRadius: 4,
-        borderWidth: 4,
-        borderColor: '#fff'
-    },
-
-    callout: {
-        width: 260
-    },
-
-    markerName: {
-        fontWeight: 'bold',
-        fontSize: 16
-    },
-
-    markerVicinity: {
-        color: '#666',
-        marginTop: 5
-    },
-
-    markerTechs: {
-        marginTop: 5
-    }
-})
-
 
 export default Main;
