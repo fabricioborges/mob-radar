@@ -3,7 +3,8 @@ import MapView, { Marker, Callout } from 'react-native-maps'
 import { View, StyleSheet, Image, Text, TextInput, TouchableOpacity } from 'react-native';
 import { requestPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
 import { MaterialIcons } from '@expo/vector-icons';
-import baseimg from '../assets/mercado.png'; 
+import api from '../services/api';
+import { GOOGLE_API_KEY } from "react-native-dotenv";
 
 function Main() {
     const [currentRegion, setCurrentRegion] = useState(null);
@@ -49,32 +50,14 @@ function Main() {
         return `${baseUrl}${location}${typeData}${api}`;
     }
 
-    function getPlaces() {
+    async function getPlaces() {
         const { latitude, longitude } = currentRegion;
-        const markersResult = [];
+       
+        const url = getPlacesUrl(latitude, longitude, 5000, placeName, GOOGLE_API_KEY);
 
-        const url = getPlacesUrl(latitude, longitude, 5000, placeName, "keyapi");
-        console.log(url)
-        fetch(url)
-            .then(res => res.json())
-            .then(res => {
-                res.results.map((element, index) => {
-                    const marketObj = {};
-                    marketObj.id = element.id;
-                    marketObj.name = element.name;
-                    marketObj.photos = element.photos;
-                    marketObj.rating = element.rating;
-                    marketObj.vicinity = element.vicinity;
-                    marketObj.marker = {
-                        latitude: element.geometry.location.lat,
-                        longitude: element.geometry.location.lng
-                    };
+        const result = await api.get(url);
 
-                    markersResult.push(marketObj);
-                });
-
-                setMakers(markersResult);
-            });
+        setMakers(result.data.results);
     }
 
     return (
@@ -83,21 +66,21 @@ function Main() {
                 onRegionChangeComplete={handleRegionChanged}
                 initialRegion={currentRegion}
                 style={styles.map}>
-                {makers.map(dev => (
+                {makers.map(marker => (
                     <Marker
-                        key={dev.id}
+                        key={marker.id}
                         coordinate={
                             {
-                                longitude: dev.marker.longitude,
-                                latitude: dev.marker.latitude
+                                longitude: marker.geometry.location.lng,
+                                latitude: marker.geometry.location.lat
                             }}>
                         <Image
                             style={styles.avatar}
-                            source={ dev.photos ? {  uri: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${dev.photos[0].photo_reference}&sensor=false&maxheight=${dev.photos[0].height}&maxwidth=${dev.photos[0].width}&key=${"keyapi"}` } : baseimg} />
+                            source={marker.photos ? { uri: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${marker.photos[0].photo_reference}&sensor=false&maxheight=${marker.photos[0].height}&maxwidth=${marker.photos[0].width}&key=${GOOGLE_API_KEY}` } : { uri: marker.icon }} />
                         <Callout>
                             <View style={styles.callout}>
-                                <Text style={styles.devName}>{dev.name}</Text>
-                                <Text style={styles.devBio}>{dev.vicinity}</Text>
+                                <Text style={styles.markerName}>{marker.name}</Text>
+                                <Text style={styles.markerVicinity}>{marker.vicinity}</Text>
                             </View>
                         </Callout>
                     </Marker>
@@ -170,17 +153,17 @@ const styles = StyleSheet.create({
         width: 260
     },
 
-    devName: {
+    markerName: {
         fontWeight: 'bold',
         fontSize: 16
     },
 
-    devBio: {
+    markerVicinity: {
         color: '#666',
         marginTop: 5
     },
 
-    devTechs: {
+    markerTechs: {
         marginTop: 5
     }
 })
