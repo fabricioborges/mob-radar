@@ -77,7 +77,9 @@ function Main() {
                             }}>
                         <Image
                             style={styles.avatar}
-                            source={marker.photos ? { uri: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${marker.photos[0].photo_reference}&sensor=false&maxheight=${marker.photos[0].height}&maxwidth=${marker.photos[0].width}&key=${GOOGLE_API_KEY}` } : { uri: marker.icon }} />
+                            source={marker.photos ?
+                                { uri: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${marker.photos[0].photo_reference}&sensor=false&maxheight=${marker.photos[0].height}&maxwidth=${marker.photos[0].width}&key=${GOOGLE_API_KEY}` }
+                                : { uri: marker.icon }} />
                         <Callout>
                             <View style={styles.callout}>
                                 <Text style={styles.markerName}>{marker.name}</Text>
@@ -89,14 +91,14 @@ function Main() {
             </MapView>
             <View style={styles.searchForm}>
                 <TextInput
-                    id="inputText"
                     style={styles.searchInput}
                     placeholder='Buscar locais próximos...'
                     placeholderTextColor="#999"
                     autoCapitalize="words"
                     autoCorrect={false}
                     value={placeName}
-                    onChangeText={setPlaceName} />
+                    onChangeText={setPlaceName}
+                    testID="viewtest" />
                 <TouchableOpacity onPress={getPlaces} style={styles.loadButton}>
                     <MaterialIcons name="my-location" size={20} color="#fff" />
                 </TouchableOpacity>

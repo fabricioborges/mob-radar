@@ -18,6 +18,8 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.0.tar.gz",
     "react-native-dotenv": "^0.2.0",
     "react-native-maps": "^0.27.1",
+    "react-native-testid": "^1.0.0",
+    "react-native-testing-library": "^2.1.0",
     "react-native-web": "~0.11.7"
   },
   "devDependencies": {
@@ -26,13 +28,14 @@
     "enzyme-adapter-react-16": "^1.15.2",
     "jest-expo": "^38.0.2",
     "jest-expo-enzyme": "^1.0.2",
+    "jsdom-global": "^3.0.2",
     "react-test-renderer": "^16.13.1"
   },
   "jest": {
     "preset": "jest-expo",
-    "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*)"
-    ]
+      "transformIgnorePatterns": [
+        "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*)"
+      ]
   },
   "private": true
 }
